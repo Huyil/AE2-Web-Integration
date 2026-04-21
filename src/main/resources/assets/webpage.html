@@ -47,9 +47,14 @@
             border-color: rgb(85, 0, 0);
         }
         td img{
-            float: right;
-            width: 32px;
-            height: 32px;
+            float: left;
+            width: 48px;
+            height: 48px;
+            margin-right: 8px;
+            image-rendering: pixelated;
+        }
+        td .item-info{
+            overflow: hidden;
         }
         body>h1{
             text-align: center;
@@ -536,10 +541,10 @@
 
     </section>
 </section>
-<h1>UNIVERSAL WEB TERMINAL</h1>
+<h1 id="appTitle">UNIVERSAL WEB TERMINAL</h1>
 <section id="overlay">
     <section id="overlaytext">
-        LOADING...
+        <span id="loadingText">LOADING...</span>
     </section>
 </section>
 <section id="alertoverlay">
@@ -552,23 +557,19 @@
     <section style='display: none;'>
         <section style='display: flex; flex-direction: row; flex-wrap: wrap;'>
             <select id="gridselection" size="5" style="margin-right: 10px; overflow-y: auto;" onchange="selectedGridChanged(this);">
-                <!-- <option value="1">Grid 1 owned</option>
-                <option value="2">Grid 2 owned</option>
-                <option value="3">Grid 3 owned</option>
-                <option value="4">Grid 4 owned</option> -->
             </select>
             <section>
-                <input type="checkbox" id="thisgridbydefault" disabled onchange="onThisGridByDefaultChange(this);">  <label for="thisgridbydefault">Select this grid by default</label> <br>
-                <input type="checkbox" id="trackthisgrid" disabled onchange="onTrackThisGridChange(this);"> <label for="trackthisgrid">Enable tracking for this grid (track jobs)</label> <br>
+                <input type="checkbox" id="thisgridbydefault" disabled onchange="onThisGridByDefaultChange(this);">  <label for="thisgridbydefault" id="labelDefaultGrid">Select this grid by default</label> <br>
+                <input type="checkbox" id="trackthisgrid" disabled onchange="onTrackThisGridChange(this);"> <label for="trackthisgrid" id="labelTrackGrid">Enable tracking for this grid (track jobs)</label> <br>
             </section>
-            <span class='note' style="flex: 0 0 100%; margin-top: 10px;">To be able to select a grid, there must be a wireless access point available, and you have to be owner of it (you have to be the one who placed it).</span>
+            <span class='note' id="gridNote" style="flex: 0 0 100%; margin-top: 10px;">To be able to select a grid, there must be a wireless access point available, and you have to be owner of it (you have to be the one who placed it).</span>
         </section>
     </section>
 </section>
 <section id="terminalcontainer">
     <section id="terminaltypes">
         <section id='terminalOptions'>
-            <button class='collapsible mobile-only'>Terminal options</button>
+            <button class='collapsible mobile-only' id="terminalOptionsBtn">Terminal options</button>
             <section>
                 <button onclick='changeSortingBy(this);' id='sortByButton'>initializing</button>
                 <button onclick='changeStoredCraftable(this);' id='storedCraftableButton'>initializing</button>
@@ -591,37 +592,37 @@
     <section id="terminalwindow">
         <section id="terminalheader">
             <section id="terminalTerminalHeader">
-                Terminal <input type="text" id="searchtext" placeholder="Search string" onkeyup="searchStringChanged(this);">
-                <button onclick='openCraftingStatus();'>Crafting</button>
-                <button onclick='openCraftingHistory();'>Crafting History</button>
-                <button onclick='refreshTerminal();'>Refresh</button>
+                <span class="i18n-terminal">Terminal</span> <input type="text" id="searchtext" placeholder="Search string" onkeyup="searchStringChanged(this);">
+                <button onclick='openCraftingStatus();' class="i18n-crafting">Crafting</button>
+                <button onclick='openCraftingHistory();' class="i18n-craftingHistory">Crafting History</button>
+                <button onclick='refreshTerminal();' class="i18n-refresh">Refresh</button>
             </section>
             <section id="terminalCPUHeader" style="display: none;">
                 <span id="terminalCPUHeaderText"></span>
-                <button onclick='closeCraftingStatus();'>Terminal</button>
-                <button onclick='refreshTerminal();'>Refresh</button>
-                <button onclick='cancelJobOnCPU(selectedCPU);' class='redtext' id='cancelJobOnCPUButton'>Cancel</button>
+                <button onclick='closeCraftingStatus();' class="i18n-terminal">Terminal</button>
+                <button onclick='refreshTerminal();' class="i18n-refresh">Refresh</button>
+                <button onclick='cancelJobOnCPU(selectedCPU);' class='redtext i18n-cancel' id='cancelJobOnCPUButton'>Cancel</button>
             </section>
             <section id='terminalJobHeader' style='display: none;'>
                 <span id="terminalJobHeaderText"></span>
-                <button onclick='cancelCurrentJob();' class='redtext'>Cancel</button>
+                <button onclick='cancelCurrentJob();' class='redtext i18n-cancel'>Cancel</button>
             </section>
             <section id='terminalHistoryHeader' style='display: none;'>
                 <span id="terminalHistoryHeaderText"></span>
-                <button onclick='closeCraftingStatus();'>Terminal</button>
-                <button onclick='getCraftingHistory();' id="terminalHistoryHeaderRefresh">Refresh</button>
+                <button onclick='closeCraftingStatus();' class="i18n-terminal">Terminal</button>
+                <button onclick='getCraftingHistory();' id="terminalHistoryHeaderRefresh" class="i18n-refresh">Refresh</button>
             </section>
         </section>
         <section id="terminalcontent"></section>
     </section>
     <section id="terminalsubcontainer">
         <section id="terminalsubcontainersettings">
-            <header class='mobile-hidden'>Settings</header>
-            <button class='collapsible mobile-only'>Settings</button>
+            <header class='mobile-hidden i18n-settings'>Settings</header>
+            <button class='collapsible mobile-only i18n-settings' id="settingsBtn">Settings</button>
             <section>
-                <input type="checkbox" name="autorefresh" id="autorefresh" onchange="changeAutoRefresh(this);"> <label for='autorefresh'>Automatically refresh current screen</label>
+                <input type="checkbox" name="autorefresh" id="autorefresh" onchange="changeAutoRefresh(this);"> <label for='autorefresh' class="i18n-autoRefresh">Automatically refresh current screen</label>
                 <br>
-                <input type="number" name="itemsperrow" id="itemsperrow" min=1 max=8 value=5 onchange="changeItemsPerRow(this);"> <label for='itemsperrow'>Items per row</label>
+                <input type="number" name="itemsperrow" id="itemsperrow" min=1 max=8 value=5 onchange="changeItemsPerRow(this);"> <label for='itemsperrow' class="i18n-itemsPerRow">Items per row</label>
                 <br>
                 <select name="numberformat" id="numberformat" onchange="changeNumberFormat(this);">
                     <option value=0>Local</option>
@@ -630,16 +631,20 @@
                     <option value=3>Scientific</option>
                     <option value=4>No format</option>
                 </select>
-                <label for="numberformat"> Number format</label>
+                <label for="numberformat" class="i18n-numberFormat"> Number format</label>
                 <br>
-                <input type="checkbox" name="showitemid" id="showitemid" onchange="changeShowItemID(this);"> <label for="showitemid">Show item id</label>
+                <input type="checkbox" name="showitemid" id="showitemid" onchange="changeShowItemID(this);"> <label for="showitemid" class="i18n-showItemId">Show item id</label>
                 <br>
-                <input type="checkbox" name="showitemicon" id="showitemicon" onchange="changeShowItemIcon(this);" disabled title="Work in progress"> <label for="showitemicon" title="Work in progress">Show item icons [work in progress]</label>
+                <input type="checkbox" name="showitemicon" id="showitemicon" onchange="changeShowItemIcon(this);"> <label for="showitemicon" class="i18n-showItemIcons">Show item icons</label>
                 <br>
-                <button onclick="if(confirm('Are you sure you want to purge icons cache? This will result all icons to be redownloaded!')){ localStorage.clear(); location.reload(); }">Purge icon cache</button>
+                <label class="i18n-language">Language</label>
+                <select id="langSelect" onchange="setLanguage(this.value);">
+                    <option value="en">English</option>
+                    <option value="zh">中文</option>
+                </select>
                 <br>
-                You are logged in as <span id="username" style="font-weight: bold;"></span> <br>
-                <button onclick="document.location.href='?logout'">LogOut</button>
+                <span class="i18n-youAreLoggedInAs">You are logged in as</span> <span id="username" style="font-weight: bold;"></span> <br>
+                <button onclick="document.location.href='?logout'" class="i18n-logOut">LogOut</button>
             </section>
         </section>
     </section>
@@ -647,6 +652,95 @@
 
 <script>
     document.cookie = "cookiesAccepted=true; max-age=" + 60 * 60 * 24 * 7 + "; path=/";
+
+    // i18n
+    let currentLang = localStorage.getItem('lang') || (navigator.language.startsWith('zh') ? 'zh' : 'en');
+    const LANG = {
+        en: {
+            terminal: "Terminal", crafting: "Crafting", craftingHistory: "Crafting History",
+            refresh: "Refresh", cancel: "Cancel", settings: "Settings",
+            terminalOptions: "Terminal options", searchPlaceholder: "Search string",
+            itemsPerRow: "Items per row", showItemId: "Show item id", showItemIcons: "Show item icons",
+            autoRefresh: "Automatically refresh current screen",
+            stored: "Stored", order: "order", crafting_label: "Crafting",
+            scheduled: "Scheduled", missing: "Missing",
+            ownedBy: "Owned by", cpuCount: "CPU count", defaultLabel: "Default", tracked: "Tracked",
+            grid: "Grid", errorInvalidGrid: "Error: Invalid grid",
+            howMuchToOrder: "How much to order?", sendingOrder: "Sending order...",
+            askingFor: "Asking for", askingForItemList: "Asking for item list...",
+            askingForTrackingHistory: "Asking for tracking history list...", askingForTrackingData: "Asking for tracking data...",
+            logOut: "LogOut", youAreLoggedInAs: "You are logged in as",
+            showItemCraftingChart: "Show item crafting chart", hideItemCraftingChart: "Hide item crafting chart",
+            trackingHistory: "Tracking history",
+            craftingPlan: "Crafting Plan", bytes: "bytes",
+            close: "Close", hideFor7Days: "Hide for 7 days",
+            newVersionDetected: "New version detected! Consider updating from",
+            numberFormat: "Number format", local: "Local", compact: "Compact", noFormat: "No format", scientific: "Scientific",
+            storedCraftable: "Stored", craftableOnly: "Craftable", storedAndCraftable: "Stored and craftable",
+            itemsOnly: "Items", fluidDrops: "Fluid drops", itemsAndFluids: "Items and fluid drops",
+            storedLabel: "Stored", craftableLabel: "Craftable",
+            display: "Display", language: "Language",
+            appTitle: "UNIVERSAL WEB TERMINAL", loading: "LOADING...", pleaseWait: "Please wait",
+            noGridSelected: "No grid selected", idle: "Idle",
+            wasCancelled: "(was cancelled)", cancelled: "Was cancelled!",
+            completedIn: "Completed in ", startedAt: "Started:<br>- ", completedAt: "Completed:<br>- ",
+            calculatingPleaseWait: "Calculating, please wait...", submittingJob: "Submitting job...", cancellingJob: "Cancelling job...",
+            hideInterfaceUsageChart: "Hide interface usage chart", showInterfaceUsageChart: "Show interface usage chart",
+            coProcs: "Co-Procs",
+            sortByAZ: "A-Z", sortByItems: "# of items", sortByMod: "Mod",
+            ascending: "Ascending", descending: "Descending",
+            selectGridByDefault: "Select this grid by default",
+            enableTracking: "Enable tracking for this grid (track jobs)",
+            gridSelectionNote: "To be able to select a grid, there must be a wireless access point available, and you have to be owner of it (you have to be the one who placed it).",
+            jobFor: "Job for", craftingItem: "Crafting",
+            toCraft: "To craft", steps: "Steps", available: "Available", used: "Used", start: "Start",
+        },
+        zh: {
+            terminal: "终端", crafting: "合成", craftingHistory: "合成历史",
+            refresh: "刷新", cancel: "取消", settings: "设置",
+            terminalOptions: "终端选项", searchPlaceholder: "搜索",
+            itemsPerRow: "每行物品数", showItemId: "显示物品ID", showItemIcons: "显示物品图标",
+            autoRefresh: "自动刷新当前页面",
+            stored: "已存储", order: "订购", crafting_label: "合成中",
+            scheduled: "已计划", missing: "缺少",
+            ownedBy: "所有者", cpuCount: "CPU数量", defaultLabel: "默认", tracked: "追踪中",
+            grid: "网络", errorInvalidGrid: "错误：无效网络",
+            howMuchToOrder: "订购数量？", sendingOrder: "发送订单...",
+            askingFor: "请求中", askingForItemList: "获取物品列表...",
+            askingForTrackingHistory: "获取合成历史...", askingForTrackingData: "获取追踪数据...",
+            logOut: "退出登录", youAreLoggedInAs: "当前登录",
+            showItemCraftingChart: "显示物品合成图表", hideItemCraftingChart: "隐藏物品合成图表",
+            trackingHistory: "合成历史",
+            craftingPlan: "合成计划", bytes: "字节",
+            close: "关闭", hideFor7Days: "7天内不再提示",
+            newVersionDetected: "检测到新版本，请考虑从",
+            numberFormat: "数字格式", local: "本地", compact: "简写", noFormat: "无格式", scientific: "科学计数法",
+            storedCraftable: "已存储", craftableOnly: "可合成", storedAndCraftable: "存储和可合成",
+            itemsOnly: "物品", fluidDrops: "流体", itemsAndFluids: "物品和流体",
+            storedLabel: "存储", craftableLabel: "可合成",
+            display: "显示", language: "语言",
+            appTitle: "通用Web终端", loading: "加载中...", pleaseWait: "请稍候",
+            noGridSelected: "未选择网络", idle: "空闲",
+            wasCancelled: "(已取消)", cancelled: "已取消！",
+            completedIn: "完成于 ", startedAt: "开始：<br>- ", completedAt: "完成：<br>- ",
+            calculatingPleaseWait: "计算中，请稍候...", submittingJob: "提交任务中...", cancellingJob: "取消任务中...",
+            hideInterfaceUsageChart: "隐藏接口使用图表", showInterfaceUsageChart: "显示接口使用图表",
+            coProcs: "协处理器",
+            sortByAZ: "A-Z", sortByItems: "物品数", sortByMod: "模组",
+            ascending: "升序", descending: "降序",
+            selectGridByDefault: "设为默认网络",
+            enableTracking: "启用此网络追踪（追踪合成任务）",
+            gridSelectionNote: "要选择网络，必须有无线接入点可用，且你必须是其所有者（放置者）。",
+            jobFor: "任务", craftingItem: "合成",
+            toCraft: "待合成", steps: "步骤", available: "可用", used: "已用", start: "开始",
+        }
+    };
+    function t(key) { return LANG[currentLang][key] || LANG['en'][key] || key; }
+    function setLanguage(lang) {
+        localStorage.setItem('lang', lang);
+        location.reload();
+    }
+
     const username = "_REPLACE_ME_USERNAME";
     const isAdmin = _REPLACE_ME_IS_ADMIN;
     const isOutdated = _REPLACE_ME_VERSION_OUTDATED;
@@ -679,10 +773,10 @@
         ["terminalCPUListForJob", "terminalJobHeader"],
         ["terminalHistoryHeader", "terminalHistoryDetails"],
     ];
-    const sortByDisplay = ['A-Z', '# of items', 'Mod'];
-    const sortOrderDisplay = ['Ascending', 'Descending'];
-    const storedCraftableDisplay = ['Stored', 'Craftable', 'Stored and craftable'];
-    const itemsTypeDisplay = ['Items', 'Fluid drops', 'Items and fluid drops'];
+    function getSortByDisplay() { return [t('sortByAZ'), t('sortByItems'), t('sortByMod')]; }
+    function getSortOrderDisplay() { return [t('ascending'), t('descending')]; }
+    function getStoredCraftableDisplay() { return [t('storedCraftable'), t('craftableOnly'), t('storedAndCraftable')]; }
+    function getItemsTypeDisplay() { return [t('itemsOnly'), t('fluidDrops'), t('itemsAndFluids')]; }
 
     const BYTE_UNIT = [ "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "BB" ];
     const BYTE_LIMIT = [ 1.0, 1024.0, 1048576.0, 1.073741824E9, 1.099511627776E12, 1.125899906842624E15, 1.15292150460684698E18, 1.1805916207174113E21, 1.2089258196146292E24, 1.2379400392853803E27 ];
@@ -734,7 +828,7 @@
     function changeSortingBy(el){
         sortingOptions.sortBy++;
         if (sortingOptions.sortBy > 2) sortingOptions.sortBy = 0;
-        el.innerHTML = sortByDisplay[sortingOptions.sortBy];
+        el.innerHTML = getSortByDisplay()[sortingOptions.sortBy];
         sortItemList();
         displayItemList();
         setCookie("sortBy", sortingOptions.sortBy, 7);
@@ -742,21 +836,21 @@
     function changeStoredCraftable(el){
         filteringOptions.storedCraftable++;
         if (filteringOptions.storedCraftable > 2) filteringOptions.storedCraftable = 0;
-        el.innerHTML = storedCraftableDisplay[filteringOptions.storedCraftable];
+        el.innerHTML = getStoredCraftableDisplay()[filteringOptions.storedCraftable];
         displayItemList();
         setCookie("storedCraftable", filteringOptions.storedCraftable, 7);
     }
     function changeItemsFluids(el){
         filteringOptions.itemsType++;
         if (filteringOptions.itemsType > 2) filteringOptions.itemsType = 0;
-        el.innerHTML = itemsTypeDisplay[filteringOptions.itemsType];
+        el.innerHTML = getItemsTypeDisplay()[filteringOptions.itemsType];
         displayItemList();
         setCookie("itemsType", filteringOptions.itemsType, 7);
     }
     function changeSortOrder(el){
         sortingOptions.sortOrder++;
         if (sortingOptions.sortOrder > 1) sortingOptions.sortOrder = 0;
-        el.innerHTML = sortOrderDisplay[sortingOptions.sortOrder];
+        el.innerHTML = getSortOrderDisplay()[sortingOptions.sortOrder];
         sortItemList();
         displayItemList();
         setCookie("sortOrder", sortingOptions.sortOrder, 7);
@@ -819,6 +913,34 @@
     function refreshDisplay(){
         if (currentWindow == 0)
             displayItemList();
+        else if (currentWindow == 1)
+            openCraftingStatus();
+        else if (currentWindow == 3)
+            getCraftingHistory();
+    }
+
+    function updateUILabels(){
+        // Title
+        document.getElementById('appTitle').textContent = t('appTitle');
+        document.getElementById('loadingText').textContent = t('loading');
+        document.getElementById('currentgrid').childNodes[0].textContent = t('noGridSelected');
+        // Grid section
+        document.getElementById('labelDefaultGrid').textContent = t('selectGridByDefault');
+        document.getElementById('labelTrackGrid').textContent = t('enableTracking');
+        document.getElementById('gridNote').textContent = t('gridSelectionNote');
+        // Terminal options
+        document.getElementById('terminalOptionsBtn').textContent = t('terminalOptions');
+        // Search
+        document.getElementById('searchtext').placeholder = t('searchPlaceholder');
+        // Use i18n class-based approach for all labeled elements
+        document.querySelectorAll('[class*="i18n-"]').forEach(function(el) {
+            el.classList.forEach(function(cls) {
+                if (cls.startsWith('i18n-')) {
+                    var key = cls.substring(5);
+                    if (LANG[currentLang][key]) el.textContent = t(key);
+                }
+            });
+        });
     }
     function setCookie(cname, cvalue, exdays) {
         const d = new Date();
@@ -871,10 +993,10 @@
             cookie = getCookie("showItemIcon");
         if (cookie != "")
             settings.showItemIcon = Number(cookie) == 1;
-        document.getElementById('sortByButton').innerHTML = sortByDisplay[sortingOptions.sortBy];
-        document.getElementById('storedCraftableButton').innerHTML = storedCraftableDisplay[filteringOptions.storedCraftable];
-        document.getElementById('itemsFluidsButton').innerHTML = itemsTypeDisplay[filteringOptions.itemsType];
-        document.getElementById('sortOrderButton').innerHTML = sortOrderDisplay[sortingOptions.sortOrder];
+        document.getElementById('sortByButton').innerHTML = getSortByDisplay()[sortingOptions.sortBy];
+        document.getElementById('storedCraftableButton').innerHTML = getStoredCraftableDisplay()[filteringOptions.storedCraftable];
+        document.getElementById('itemsFluidsButton').innerHTML = getItemsTypeDisplay()[filteringOptions.itemsType];
+        document.getElementById('sortOrderButton').innerHTML = getSortOrderDisplay()[sortingOptions.sortOrder];
         document.getElementById('autorefresh').checked = settings.autoRefresh;
         document.getElementById('itemsperrow').value = settings.itemsPerRow;
         document.getElementById('numberformat').value = settings.numberFormat;
@@ -1014,7 +1136,7 @@
         if (selectedGrid == -1)
             return;
         if (Object.keys(globalCPUList).length == 0) return;
-        let message = "Asking for " + selectedCPU + "...";
+        let message = t('askingFor') + " " + selectedCPU + "...";
         pushLoadingScreen(message);
         $.getJSON('get?grid=' + selectedGrid + '&cpu=' + encodeURIComponent(selectedCPU).replace(/'/g,"%27").replace(/"/g,"%22"), function(data){
             console.log(data);
@@ -1027,9 +1149,9 @@
             let html = "";
             if (data['finalOutput'])
                 document.getElementById("terminalCPUHeaderText").innerHTML =
-                    selectedCPU + ": Crafting " + formatItemName(data['finalOutput'], false) + " x" + data['finalOutput']['quantity'];
+                    selectedCPU + ": " + t('craftingItem') + " " + formatItemName(data['finalOutput'], false) + " x" + data['finalOutput']['quantity'];
             else
-                document.getElementById("terminalCPUHeaderText").innerHTML = selectedCPU + ": Idle";
+                document.getElementById("terminalCPUHeaderText").innerHTML = selectedCPU + ": " + t('idle');
             let hasTrackingInfo = data['hasTrackingInfo'];
             if (data['items'] && data['items'].length > 0) {
                 document.getElementById("cancelJobOnCPUButton").style.display = 'block';
@@ -1047,12 +1169,17 @@
                             el = 'pending';
                         else
                             el = 'storage';
-                        html += "<td class='" + el + "'>" + formatItemName(item) + "<br>Crafting: " + formatNumber(item['active']) + "<br>Scheduled: " + formatNumber(item['pending']) + "<br>Stored: " + formatNumber(item['stored']);
+                        let cpuIconHtml = '';
+                        if (settings.showItemIcon && item['itemid']){
+                            let cpuIconUrl = '/icon/' + item['itemid'].replace(/:/g, '__') + '.png';
+                            cpuIconHtml = "<img src='" + cpuIconUrl + "' onerror='this.style.display=\"none\"' />";
+                        }
+                        html += "<td class='" + el + "'>" + cpuIconHtml + "<div class='item-info'>" + formatItemName(item) + "<br>" + t('crafting_label') + ": " + formatNumber(item['active']) + "<br>" + t('scheduled') + ": " + formatNumber(item['pending']) + "<br>" + t('stored') + ": " + formatNumber(item['stored']);
                         if (hasTrackingInfo && item['timeSpentCrafting']){
                             html += "<br>Time: " + formatTime(item['timeSpentCrafting']) + " (" + formatPercent(item['shareInCraftingTimeCombined']) + ")";
                             html += "<br>Crafted total: " + formatNumber(item['craftedTotal']) + " (" + formatNumber(item['craftsPerSec']) + "/s)";
                         }
-                        html += "</td>";
+                        html += "</div></td>";
                         grid_i++;
                         if(grid_i == grid_i_max){
                             html += "</tr><tr>";
@@ -1099,7 +1226,7 @@
             let html = "";
             for (let i = 0; i < data.length; i++){
                 let grid = data[i];
-                let str = grid['key'] + " [ Owned by " + grid['owner'] + " ][ CPU count: " + grid['cpuCount'] + " ]" + (settings.defaultGrid != -1 && grid['key'] == settings.defaultGrid ? "[ Default ]" : "") + (grid['isTrackingEnabled'] ? "[ Tracked ]" : "");
+                let str = grid['key'] + " [ " + t('ownedBy') + " " + grid['owner'] + " ][ " + t('cpuCount') + ": " + grid['cpuCount'] + " ]" + (settings.defaultGrid != -1 && grid['key'] == settings.defaultGrid ? "[ " + t('defaultLabel') + " ]" : "") + (grid['isTrackingEnabled'] ? "[ " + t('tracked') + " ]" : "");
                 html += "<option value='" + grid['key'] + "' " + (grid['key'] == -1 ? "disabled" : "") + (selectedGrid != -1 && grid['key'] == selectedGrid ? "selected" : "") + ">Grid " + str + "</option>";
                 if (selectedGrid != -1 && grid['key'] == selectedGrid) {
                     document.getElementById('thisgridbydefault').checked = settings.defaultGrid == selectedGrid;
@@ -1169,7 +1296,7 @@
             else {
                 html += "<br>" + formatBytes(cluster['availableStorage']);
             }
-            html += "<br>" + cluster['coProcessors'] + " Co-Procs";
+            html += "<br>" + cluster['coProcessors'] + " " + t('coProcs');
             html += "</button>";
         }
         document.getElementById('terminalCPUListForJob').innerHTML = html;
@@ -1205,30 +1332,22 @@
         setCurrentScreen(3);
         getCraftingHistory();
     }
-    function displayItemList(shouldFetchIcons = false){
+    function displayItemList(){
         let html = "<table>";
         let grid_i_max = settings.itemsPerRow;
         let grid_i = 0;
         html += "<tr>";
         let items = globalItemList;
-        let itemsNoIcon = [];
         for(let i = 0; i < items.length; i++){
             let item = items[i];
             if (!shouldDisplay(item))
                 continue;
-            let imgSrc = getIcon(item);
-            if (imgSrc === null){
-                itemsNoIcon.push(item);
-                imgSrc = '';
-            }
-            else {
-                imgSrc = "data:image/png;base64," + imgSrc;
-            }
             if (settings.showItemIcon){
-                html += "<td class='storage'>" + formatItemName(item) + "<img src='" + imgSrc + "' /><br>Stored: " + formatNumber(item['quantity']) + (item['craftable'] ? '<br><button onclick="beginOrderingItem(' + item['hashcode'] + ');">order</button>' : '') + "</td>";
+                let iconUrl = '/icon/' + item['itemid'].replace(/:/g, '__') + '.png';
+                html += "<td class='storage'><img src='" + iconUrl + "' onerror='this.style.display=\"none\"' /><div class='item-info'>" + formatItemName(item) + "<br>" + t('stored') + ": " + formatNumber(item['quantity']) + (item['craftable'] ? '<br><button onclick="beginOrderingItem(' + item['hashcode'] + ');">' + t('order') + '</button>' : '') + "</div></td>";
             }
             else {
-                html += "<td class='storage'>" + formatItemName(item) + "<br>Stored: " + formatNumber(item['quantity']) + (item['craftable'] ? '<br><button onclick="beginOrderingItem(' + item['hashcode'] + ');">order</button>' : '') + "</td>";
+                html += "<td class='storage'>" + formatItemName(item) + "<br>" + t('stored') + ": " + formatNumber(item['quantity']) + (item['craftable'] ? '<br><button onclick="beginOrderingItem(' + item['hashcode'] + ');">' + t('order') + '</button>' : '') + "</td>";
             }
             grid_i++;
             if(grid_i == grid_i_max){
@@ -1238,13 +1357,11 @@
         }
         html += "</tr></table>";
         document.getElementById("terminalcontent").innerHTML = html;
-        if (settings.showItemIcon && shouldFetchIcons && itemsNoIcon.length > 0)
-            fetchIcons(itemsNoIcon);
     }
     function getItemList(){
         if (selectedGrid == -1)
             return;
-        let message = "Asking for item list...";
+        let message = t('askingForItemList');
         pushLoadingScreen(message);
         $.getJSON('items?grid=' + selectedGrid, function(data){
             console.log(data);
@@ -1256,14 +1373,14 @@
             data = data.data;
             globalItemList = data;
             sortItemList();
-            displayItemList(true);
+            displayItemList();
             popLoadingScreen(message);
         });
     }
     function getCraftingHistory(){
         if (selectedGrid == -1)
             return;
-        let message = "Asking for tracking history list...";
+        let message = t('askingForTrackingHistory');
         pushLoadingScreen(message);
         $.getJSON('trackinghistory?grid=' + selectedGrid, function(data){
             console.log(data);
@@ -1277,18 +1394,18 @@
             for (let i = 0; i < data.length; i++){
                 let trackingHistoryInfo = data[i];
                 html += "<tr><td class='button' onclick='openTrackingData(" + trackingHistoryInfo['id'] + ");'>";
-                html += "Job for " + formatItemName(trackingHistoryInfo['finalOutput'], false) + " x" + trackingHistoryInfo['finalOutput']['quantity'];
+                html += t('jobFor') + " " + formatItemName(trackingHistoryInfo['finalOutput'], false) + " x" + trackingHistoryInfo['finalOutput']['quantity'];
                 if (trackingHistoryInfo['wasCancelled']){
-                    html += " (was cancelled)";
+                    html += " " + t('wasCancelled');
                 }
                 html += "<br>Started " + new Date(Number(trackingHistoryInfo['timeStarted'])).toLocaleString();
                 html += "<br>Completed " + new Date(Number(trackingHistoryInfo['timeDone'])).toLocaleString();
-                html += "<br>Completed in " + formatTime(Number(trackingHistoryInfo['timeDone']) - Number(trackingHistoryInfo['timeStarted']));
+                html += "<br>" + t('completedIn') + formatTime(Number(trackingHistoryInfo['timeDone']) - Number(trackingHistoryInfo['timeStarted']));
                 html += "</td></tr>";
             }
             html += "</table>";
             document.getElementById("terminalcontent").innerHTML = html;
-            document.getElementById("terminalHistoryHeaderText").innerHTML = "Tracking history";
+            document.getElementById("terminalHistoryHeaderText").innerHTML = t('trackingHistory');
             document.getElementById("terminalHistoryHeaderRefresh").innerHTML = "Refresh";
             document.getElementById("terminalHistoryDetails").innerHTML = "...";
             popLoadingScreen(message);
@@ -1373,12 +1490,12 @@
                 }
             });
         }
-        document.getElementById('toggleInterfaceShare').innerHTML = "Hide interface usage chart";
+        document.getElementById('toggleInterfaceShare').innerHTML = t('hideInterfaceUsageChart');
         document.getElementById('toggleInterfaceShare').onclick = hideInterfaceShare;
         document.getElementById("interfaceShareChart").style.display = 'block';
     }
     function hideInterfaceShare(){
-        document.getElementById('toggleInterfaceShare').innerHTML = "Show interface usage chart";
+        document.getElementById('toggleInterfaceShare').innerHTML = t('showInterfaceUsageChart');
         document.getElementById('toggleInterfaceShare').onclick = showInterfaceShare;
         document.getElementById("interfaceShareChart").style.display = 'none';
     }
@@ -1451,19 +1568,19 @@
                 }
             });
         }
-        document.getElementById('toggleItemShare').innerHTML = "Hide item crafting chart";
+        document.getElementById('toggleItemShare').innerHTML = t('hideItemCraftingChart');
         document.getElementById('toggleItemShare').onclick = hideItemShare;
         document.getElementById("itemShareChart").style.display = 'block';
     }
     function hideItemShare(){
-        document.getElementById('toggleItemShare').innerHTML = "Show item crafting chart";
+        document.getElementById('toggleItemShare').innerHTML = t('showItemCraftingChart');
         document.getElementById('toggleItemShare').onclick = showItemShare;
         document.getElementById("itemShareChart").style.display = 'none';
     }
     function openTrackingData(id){
         if (selectedGrid == -1)
             return;
-        let message = "Asking for tracking data...";
+        let message = t('askingForTrackingData');
         isInterfaceChartInitialized = false;
         isItemChartInitialized = false;
         pushLoadingScreen(message);
@@ -1476,8 +1593,8 @@
             }
             data = data.data;
 
-            let html = "<button onclick='showInterfaceShare();' id='toggleInterfaceShare' style='width: 90%; font-size: 110%; margin: 10px 5%;'>Show interface usage chart</button><canvas id='interfaceShareChart' style='width:100%;max-width:100%;display:none;'></canvas>";
-            html += "<button onclick='showItemShare();' id='toggleItemShare' style='width: 90%; font-size: 110%; margin: 10px 5%;'>Show item crafting chart</button><canvas id='itemShareChart' style='width:100%;max-width:100%;display:none;'></canvas>";
+            let html = "<button onclick='showInterfaceShare();' id='toggleInterfaceShare' style='width: 90%; font-size: 110%; margin: 10px 5%;'>" + t('showInterfaceUsageChart') + "</button><canvas id='interfaceShareChart' style='width:100%;max-width:100%;display:none;'></canvas>";
+            html += "<button onclick='showItemShare();' id='toggleItemShare' style='width: 90%; font-size: 110%; margin: 10px 5%;'>" + t('showItemCraftingChart') + "</button><canvas id='itemShareChart' style='width:100%;max-width:100%;display:none;'></canvas>";
 
             html += "<table>";
             let grid_i_max = settings.itemsPerRow;
@@ -1505,16 +1622,16 @@
             html += "</tr></table>";
             document.getElementById("terminalcontent").innerHTML = html;
 
-            document.getElementById("terminalHistoryHeaderText").innerHTML = "Tracking history - " + formatItemName(data['finalOutput'], false) + " x" + formatNumber(data['finalOutput']['quantity']);
+            document.getElementById("terminalHistoryHeaderText").innerHTML = t('trackingHistory') + " - " + formatItemName(data['finalOutput'], false) + " x" + formatNumber(data['finalOutput']['quantity']);
             document.getElementById("terminalHistoryHeaderRefresh").innerHTML = "Close";
             html = "";
             if(data['wasCancelled'])
             {
-                html += "Was cancelled!<br>";
+                html += t('cancelled') + "<br>";
             }
-            html += "Started:<br>- " + new Date(Number(data['timeStarted'])).toLocaleString();
-            html += "<br>Completed:<br>- " + new Date(Number(data['timeDone'])).toLocaleString();
-            html += "<br>Completed in " + formatTime(Number(data['timeDone']) - Number(data['timeStarted']));
+            html += t('startedAt') + new Date(Number(data['timeStarted'])).toLocaleString();
+            html += "<br>" + t('completedAt') + new Date(Number(data['timeDone'])).toLocaleString();
+            html += "<br>" + t('completedIn') + formatTime(Number(data['timeDone']) - Number(data['timeStarted']));
             document.getElementById("terminalHistoryDetails").innerHTML = html;
 
             interfaceShareData = data['interfaceShare'];
@@ -1526,7 +1643,7 @@
         if (selectedGrid == -1)
             return;
         console.log(hashcode);
-        let answer = window.prompt("How much to order?", "1");
+        let answer = window.prompt(t('howMuchToOrder'), "1");
         if (answer === null) // cancelled
             return;
         let quantity = Number(answer);
@@ -1535,7 +1652,7 @@
         }
         else {
             document.getElementById('terminalCPUListForJob').innerHTML = "...";
-            let message = "Sending order...";
+            let message = t('sendingOrder');
             pushLoadingScreen(message);
             $.getJSON('order?grid=' + selectedGrid + '&item=' + hashcode + "&quantity=" + quantity, function(data){
                 console.log(data);
@@ -1548,7 +1665,7 @@
                 if (data['jobID']){
                     setCurrentScreen(2);
                     document.getElementById("terminalcontent").innerHTML = ";)";
-                    document.getElementById("terminalJobHeaderText").innerHTML = "Calculating, please wait...";
+                    document.getElementById("terminalJobHeaderText").innerHTML = t('calculatingPleaseWait');
                     cpuForJob = "";
                     currentJob.id = data['jobID'];
                     currentJob.itemHash = hashcode;
@@ -1583,10 +1700,10 @@
                 if (data['isSimulating']){
                     htmlHeader += "[Simulation :(] ";
                 }
-                htmlHeader += "Crafting Plan - " + data['bytesTotal'] + "bytes";
+                htmlHeader += t('craftingPlan') + " - " + data['bytesTotal'] + t('bytes');
                 currentJob.bytesTotal = data['bytesTotal'];
                 if (!data['isSimulating']){
-                    htmlHeader += "<button onclick='startCurrentJob();'>Start</button>";
+                    htmlHeader += "<button onclick='startCurrentJob();'>" + t('start') + "</button>";
                     updateCPUListForJob();
                 }
                 document.getElementById("terminalJobHeaderText").innerHTML = htmlHeader;
@@ -1597,19 +1714,24 @@
                     let items = data['plan'];
                     for(let i = 0; i < items.length; i++){
                         let item = items[i];
+                        let iconHtml = '';
+                        if (settings.showItemIcon && item['itemid']){
+                            let iconUrl = '/icon/' + item['itemid'].replace(/:/g, '__') + '.png';
+                            iconHtml = "<img src='" + iconUrl + "' onerror='this.style.display=\"none\"' />";
+                        }
 
-                        html += "<td class='" + (item['missing'] > 0 ? 'missing' : 'storage') + "'>" + formatItemName(item);
+                        html += "<td class='" + (item['missing'] > 0 ? 'missing' : 'storage') + "'>" + iconHtml + "<div class='item-info'>" + formatItemName(item);
                         if (item['missing'] > 0)
-                            html += "<br>Missing: " + formatNumber(item['missing']);
+                            html += "<br>" + t('missing') + ": " + formatNumber(item['missing']);
                         if (item['requested'] > 0)
-                            html += "<br>To craft: " + formatNumber(item['requested']);
+                            html += "<br>" + t('toCraft') + ": " + formatNumber(item['requested']);
                         if (item['steps'] > 0)
-                            html += "<br>Steps: " + formatNumber(item['steps']);
+                            html += "<br>" + t('steps') + ": " + formatNumber(item['steps']);
                         if (item['stored'] > 0)
-                            html += "<br>Available: " + formatNumber(item['stored']);
+                            html += "<br>" + t('available') + ": " + formatNumber(item['stored']);
                         if (item['usedPercent'] > 0)
-                            html += "<br>Used: " + formatPercent(item['usedPercent']);
-                        html += "</td>";
+                            html += "<br>" + t('used') + ": " + formatPercent(item['usedPercent']);
+                        html += "</div></td>";
 
                         grid_i++;
                         if(grid_i == grid_i_max){
@@ -1649,7 +1771,7 @@
         if (currentWindow != 2){
             return;
         }
-        let message = "Submitting job...";
+        let message = t('submittingJob');
         pushLoadingScreen(message);
         $.getJSON('job?grid=' + selectedGrid + '&id=' + currentJob.id + "&submit" + "&cpu=" + encodeURIComponent(cpuForJob).replace(/'/g,"%27").replace(/"/g,"%22"), function(data){
             if (data.status !== "OK"){
@@ -1667,39 +1789,12 @@
         if (selectedCPU == ""){
             return;
         }
-        let message = "Cancelling job...";
+        let message = t('cancellingJob');
         pushLoadingScreen(message);
         $.getJSON('cancelcpu?grid=' + selectedGrid + '&cpu=' + encodeURIComponent(selectedCPU).replace(/'/g,"%27").replace(/"/g,"%22"), function(data){
             updateCPUList();
             refreshTerminal();
             popLoadingScreen(message);
-        });
-    }
-
-    function getIcon(item) {
-        let data = localStorage.getItem("itemIcon" + item['hashcode']);
-        if (data === null)
-            return null;
-        return data;
-    }
-
-    function fetchIcons(items) {
-        let par = '';
-        for(let i = 0; i < items.length; i++){
-            par += items[i]['hashcode'] + ',';
-        }
-        $.getJSON('icon?items=' + par, function(data){
-            if (data.status !== "OK"){
-                showAlert(data.status + ": " + data.data);
-                return;
-            }
-            data = data.data;
-            console.log(data);
-            let items = data;
-            for(let i = 0; i < items.length; i++){
-                localStorage.setItem("itemIcon" + items[i]['hashcode'], items[i]['pngData']);
-            }
-            refreshDisplay();
         });
     }
 
@@ -1716,6 +1811,10 @@
 
     loadingMessages = [];
 
+    // Apply saved language on load
+    document.getElementById('langSelect').value = currentLang;
+    updateUILabels();
+
     function pushLoadingScreen(message){
         loadingMessages.push(message);
         updateLoadingDisplay();
@@ -1731,7 +1830,7 @@
     function updateLoadingDisplay(){
         if (loadingMessages.length > 0){
             document.getElementById('overlay').style.display = 'block';
-            let html = "Please wait<br>";
+            let html = t('pleaseWait') + "<br>";
             for(let message of loadingMessages){
                 html += message + '<br>';
             }
@@ -1747,7 +1846,7 @@
     function showAlertIfOutdated() {
         if (isOutdated && isAdmin){
             if (getCookie("DoNotShowUpdateMessage") == 1) return;
-            pushTopMessage("<span>New version detected! Consider updating from <a href='https://github.com/kuba6000/AE2-Web-Integration/releases/'>github</a></span> <button onclick='closeTopMessage(this.parentElement);'>Close</button><button onclick='updateDoNotShowAgain(this.parentElement);'>Hide for 7 days</button><br style='clear: both;'/>");
+            pushTopMessage("<span>" + t('newVersionDetected') + " <a href='https://github.com/kuba6000/AE2-Web-Integration/releases/'>github</a></span> <button onclick='closeTopMessage(this.parentElement);'>" + t('close') + "</button><button onclick='updateDoNotShowAgain(this.parentElement);'>" + t('hideFor7Days') + "</button><br style='clear: both;'/>");
         }
         else
         {

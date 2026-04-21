@@ -34,6 +34,7 @@ public class Config {
     public final ModConfigSpec.ConfigValue<Boolean> ALLOW_NO_PASSWORD_ON_LOCALHOST;
     public final ModConfigSpec.ConfigValue<Boolean> AE_PUBLIC_MODE;
     public final ModConfigSpec.ConfigValue<Integer> AE_MAX_REQUESTS_BEFORE_LOGGED_IN_PER_MINUTE;
+    public final ModConfigSpec.ConfigValue<String> ICON_DIR;
 
     // discord
     public final ModConfigSpec.ConfigValue<String> DISCORD_WEBHOOK;
@@ -65,6 +66,8 @@ public class Config {
         AE_MAX_REQUESTS_BEFORE_LOGGED_IN_PER_MINUTE = builder
             .comment("How many requests can be made before user is logged in per minute")
             .defineInRange("max_requests_before_logged_in_per_minute", 20, 1, 1000);
+        ICON_DIR = builder.comment("Directory containing item icon PNG files (relative to server directory)")
+            .define("icon_dir", "icon-exports-x64");
         builder.pop();
         builder.push("Discord");
         DISCORD_WEBHOOK = builder
@@ -98,7 +101,7 @@ public class Config {
 
     @SubscribeEvent
     private static void onReload(ModConfigEvent.Reloading event) {
-        AE2Controller.stopHTTPServer();
-        AE2Controller.startHTTPServer();
+        // No need to restart HTTP server on config reload
+        // Icon directory and other settings are read dynamically from config
     }
 }

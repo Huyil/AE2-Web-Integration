@@ -10,6 +10,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
@@ -150,6 +152,7 @@ public class AE2Controller {
         server.createContext("/gettracking", new ASyncRequestHandler(GetTracking.class));
         server.createContext("/gridsettings", new ASyncRequestHandler(GridSettings.class));
         server.createContext("/auth", new AuthHandler());
+        server.createContext("/icon", new IconFileHandler());
         server.createContext("/", new WebHandler());
         server.setExecutor(serverThread);
         server.start();
@@ -719,6 +722,79 @@ public class AE2Controller {
             throw new RuntimeException(e);
         }
 
+    }
+
+    // 1x1 transparent PNG
+    private static final byte[] TRANSPARENT_PNG = new byte[] { (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+        0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06,
+        0x00, 0x00, 0x00, 0x1F, 0x15, (byte) 0xC4, (byte) 0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41, 0x54, 0x78,
+        (byte) 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00, 0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, (byte) 0xB4, 0x00, 0x00, 0x00,
+        0x00, 0x49, 0x45, 0x4E, 0x44, (byte) 0xAE, 0x42, 0x60, (byte) 0x82 };
+
+    private static class IconFileHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            try {
+                String path = t.getRequestURI()
+                    .getPath();
+                String filename = path.substring("/icon/".length());
+
+                // Take only the last segment to prevent directory traversal
+                int lastSlash = filename.lastIndexOf('/');
+                if (lastSlash >= 0) filename = filename.substring(lastSlash + 1);
+
+                // Reject any path traversal attempts
+                if (filename.contains("..")) {
+                    t.sendResponseHeaders(403, -1);
+                    t.close();
+                    return;
+                }
+
+                // Only allow safe filename characters
+                if (!filename.matches("[a-zA-Z0-9_\\-.]+\\.png")) {
+                    t.sendResponseHeaders(403, -1);
+                    t.close();
+                    return;
+                }
+
+                Path iconDir = Path.of(Config.INSTANCE.ICON_DIR.get());
+                Path iconFile = iconDir.resolve(filename);
+                // Fallback: try with metadata suffix _0 if exact file not found
+                if (!Files.exists(iconFile)) {
+                    String baseName = filename.substring(0, filename.length() - 4); // strip .png
+                    Path metaFile = iconDir.resolve(baseName + "_0.png");
+                    if (Files.exists(metaFile)) {
+                        iconFile = metaFile;
+                    }
+                }
+                if (!Files.exists(iconFile)) {
+                    t.getResponseHeaders()
+                        .set("Content-Type", "image/png");
+                    t.getResponseHeaders()
+                        .set("Cache-Control", "public, max-age=300");
+                    t.sendResponseHeaders(200, TRANSPARENT_PNG.length);
+                    try (OutputStream os = t.getResponseBody()) {
+                        os.write(TRANSPARENT_PNG);
+                    }
+                    return;
+                }
+
+                byte[] data = Files.readAllBytes(iconFile);
+                t.getResponseHeaders()
+                    .set("Content-Type", "image/png");
+                t.getResponseHeaders()
+                    .set("Cache-Control", "public, max-age=86400");
+                t.sendResponseHeaders(200, data.length);
+                try (OutputStream os = t.getResponseBody()) {
+                    os.write(data);
+                }
+            } catch (Exception e) {
+                LOG.error("Error serving icon", e);
+                t.sendResponseHeaders(500, -1);
+                t.close();
+            }
+        }
     }
 
 }
