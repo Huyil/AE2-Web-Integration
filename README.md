@@ -22,6 +22,7 @@ Please refer to [master branch readme](https://github.com/kuba6000/AE2-Web-Integ
 ### Item Icon Setup
 
 1. Install [IconExporter](https://modrinth.com/mod/icon-exporter) on a **client** with the same mods as your server.
-2. Run `/iconexporter export` in-game to generate icons.
-3. Copy the `icon-exports-x64` folder to your **server root** directory (same level as `mods/`).
-4. Configure the icon directory in `ae2webintegration-client.toml` if needed (default: `icon-exports-x64`).
+2. Set image size to **64px** in IconExporter config (default 64 is fine, but verify it's not lower to avoid blurry icons).
+3. Start a single-player world and run `/iconexporter export` to generate icons.
+4. Copy the `icon-exports-x64` folder to your **server root** directory (same level as `mods/`).
+5. Configure the icon directory in `ae2webintegration-client.toml` if needed (default: `icon-exports-x64`).
