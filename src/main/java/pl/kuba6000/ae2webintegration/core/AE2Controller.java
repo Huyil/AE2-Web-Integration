@@ -29,6 +29,8 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
@@ -55,6 +57,8 @@ import pl.kuba6000.ae2webintegration.core.utils.RateLimiter;
 import pl.kuba6000.ae2webintegration.core.utils.VersionChecker;
 
 public class AE2Controller {
+
+    private static final Logger LOG = LoggerFactory.getLogger("AE2WebIntegration");
 
     public static IAE AE2Interface;
 
@@ -128,8 +132,10 @@ public class AE2Controller {
             Config.INSTANCE.AE_MAX_REQUESTS_BEFORE_LOGGED_IN_PER_MINUTE.get(),
             60 * 1000,
             60 * 60 * 1000); // 60 requests per minute, whitelisted for 1 hour
+        int port = Config.INSTANCE.AE_PORT.get();
+        LOG.info("Starting HTTP server on port {}", port);
         try {
-            server = HttpServer.create(new InetSocketAddress(Config.INSTANCE.AE_PORT.get()), 0);
+            server = HttpServer.create(new InetSocketAddress(port), 0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -150,7 +156,10 @@ public class AE2Controller {
     }
 
     public static void stopHTTPServer() {
-        server.stop(0);
+        if (server != null) {
+            server.stop(0);
+            server = null;
+        }
     }
 
     private static final ExecutorService serverThread = new ThreadPoolExecutor(
@@ -703,6 +712,7 @@ public class AE2Controller {
     }
 
     public static void init() {
+        stopHTTPServer();
         try {
             startHTTPServer();
         } catch (Exception e) {

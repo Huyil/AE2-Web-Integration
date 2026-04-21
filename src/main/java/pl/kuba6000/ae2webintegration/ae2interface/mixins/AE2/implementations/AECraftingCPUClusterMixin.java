@@ -1,7 +1,5 @@
 package pl.kuba6000.ae2webintegration.ae2interface.mixins.AE2.implementations;
 
-import net.pedroksl.advanced_ae.common.cluster.AdvCraftingCPU;
-
 import org.spongepowered.asm.mixin.Mixin;
 
 import appeng.api.networking.crafting.ICraftingCPU;
@@ -70,15 +68,12 @@ public interface AECraftingCPUClusterMixin extends ICraftingCPUCluster {
     default public void web$getAllItems(IItemList list) {
         if ((Object) this instanceof CraftingCPUCluster cpuCluster)
             cpuCluster.craftingLogic.getAllItems((KeyCounter) (Object) list);
-        else if ((Object) this instanceof AdvCraftingCPU advCpu)
-            advCpu.craftingLogic.getAllItems((KeyCounter) (Object) list);
     }
 
     @Override
     default public long web$getActiveItems(IAEKey key) {
         if ((Object) this instanceof CraftingCPUCluster cpuCluster)
             return cpuCluster.craftingLogic.getWaitingFor((AEKey) key);
-        else if ((Object) this instanceof AdvCraftingCPU advCpu) return advCpu.craftingLogic.getWaitingFor((AEKey) key);
         return 0L;
     }
 
@@ -86,7 +81,6 @@ public interface AECraftingCPUClusterMixin extends ICraftingCPUCluster {
     default public long web$getPendingItems(IAEKey key) {
         if ((Object) this instanceof CraftingCPUCluster cpuCluster)
             return cpuCluster.craftingLogic.getPendingOutputs((AEKey) key);
-        else if ((Object) this instanceof AdvCraftingCPU advCpu) return advCpu.craftingLogic.getWaitingFor((AEKey) key);
         return 0L;
     }
 
@@ -94,7 +88,6 @@ public interface AECraftingCPUClusterMixin extends ICraftingCPUCluster {
     default public long web$getStorageItems(IAEKey key) {
         if ((Object) this instanceof CraftingCPUCluster cpuCluster)
             return cpuCluster.craftingLogic.getStored((AEKey) key);
-        else if ((Object) this instanceof AdvCraftingCPU advCpu) return advCpu.craftingLogic.getWaitingFor((AEKey) key);
         return 0L;
     }
 
@@ -102,9 +95,6 @@ public interface AECraftingCPUClusterMixin extends ICraftingCPUCluster {
     default public IItemList web$getWaitingFor() {
         if ((Object) this instanceof CraftingCPUCluster cpuCluster)
             return (IItemList) (Object) ((ICraftingCPULogicAccessor) cpuCluster.craftingLogic).web$getJob()
-                .web$getWaitingFor().list;
-        else if ((Object) this instanceof AdvCraftingCPU advCpu)
-            return (IItemList) (Object) ((ICraftingCPULogicAccessor) advCpu.craftingLogic).web$getJob()
                 .web$getWaitingFor().list;
         return (IItemList) (Object) new KeyCounter();
     }
